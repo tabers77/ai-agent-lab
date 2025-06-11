@@ -1,0 +1,38 @@
+[project]
+name = "ai-agent-lab"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Carlos Esteban De La Cruz Ribadeneira",email = "carlosesteban.delacruzribadeneira@storaenso.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.dependencies]
+python              = ">=3.10,<3.13"          # tested on 3.10-3.12
+langchain = "^0.3"
+#langchain = "^0.2.0"
+langchain-openai    = "^0.3.17"                # any 0.1.x ≥ 0.1.7, < 0.2
+
+autogen-agentchat   = "^0.4.5"                # any 0.4.x ≥ 0.4.5, < 0.5
+autogen-core        = "^0.4.5"
+autogen-ext         = {version = "^0.4.5", extras = ["openai"]}
+
+azure-identity      = "^1.15"                 # any 1.x ≥ 1.15, < 2.0
+python-dotenv       = "^1.0"                  # any 1.x
+dataclasses-json    = "^0.6.3"                # any 0.6.x ≥ 0.6.3, < 0.7
+playwright          = "^1.43"                 # latest major that matches your browser install
+pydantic            = ">=2.10,<3.0"           # pin to Pydantic 2
+greenlet = "3.2.1"
+langgraph = "^0.4.5"
+langchain-experimental = "^0.3.4"
+langchain-anthropic = "^0.3"
+psycopg = {extras = ["binary"], version = "3.2.3"}
+langgraph-supervisor = "^0.0.24"
+langgraph-prebuilt = "^0.1.8"
+pandas = "^2.2.3"
