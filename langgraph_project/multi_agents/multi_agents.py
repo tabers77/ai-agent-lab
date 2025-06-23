@@ -1,8 +1,10 @@
 """ https://langchain-ai.github.io/langgraph/agents/multi-agent/#supervisor
 https://github.com/anurag-mishra899/Multi-Agents-Appointment-Booking/blob/main/Back-End/agents/base.py
 """
+# env_path = 'Path to Env File'
+# load_dotenv(env_path)
+# from dotenv import load_dotenv
 
-from dotenv import load_dotenv
 from langchain_openai import AzureChatOpenAI
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts.chat import ChatPromptTemplate
@@ -10,40 +12,27 @@ from typing_extensions import TypedDict, Annotated
 from typing import Literal, Dict, Any
 from langgraph.graph import StateGraph, START, END
 from langgraph.prebuilt import create_react_agent
-from langchain_core.tools import tool
 from langgraph_project.multi_agents.AgentState import State
 from langgraph.types import Command
-from langgraph_project.utils import get_llm_instance
-from conf.configs import Cfg
+
+from langgraph_project.tools.tools import book_hotel, book_flight
+from temp_helpers import llm
+
 import json
-# env_path = 'Path to Env File'
-# load_dotenv(env_path)
 
-cfg_instance = Cfg()
+# cfg_instance = Cfg()
+#
+# cfg_instance.llm_configs.llm_deployment = "gpt-app"  # "langchain_model"
+# cfg_instance.llm_configs.openai_api_version = "2024-08-01-preview"  # "2024-02-15-preview"  # Use this version for gpt4 # "2023-07-01-preview"
+#
+# llm = get_llm_instance(configs=cfg_instance.llm_configs)
 
-cfg_instance.llm_configs.llm_deployment = "gpt-app"  # "langchain_model"
-cfg_instance.llm_configs.openai_api_version = "2024-08-01-preview"  # "2024-02-15-preview"  # Use this version for gpt4 # "2023-07-01-preview"
-
-llm = get_llm_instance(configs=cfg_instance.llm_configs)
 
 # ---------------
 # 1. DEFINE TOOLS
 # ---------------
 # from langchain_openai import ChatOpenAI
 # from langgraph_supervisor import create_supervisor
-
-
-
-@tool
-def book_hotel(hotel_name: str):
-    """Book a hotel"""
-    return f"Successfully booked a stay at {hotel_name}."
-
-
-@tool
-def book_flight(from_airport: str, to_airport: str):
-    """Book a flight"""
-    return f"Successfully booked a flight from {from_airport} to {to_airport}."
 
 
 # ------------

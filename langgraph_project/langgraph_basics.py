@@ -10,6 +10,7 @@ from typing_extensions import TypedDict
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 
+import utils
 import utils as ut
 from conf.configs import Cfg
 
@@ -27,7 +28,7 @@ cfg_instance = Cfg()
 cfg_instance.llm_configs.llm_deployment = "gpt-app"  # "langchain_model"
 cfg_instance.llm_configs.openai_api_version = "2024-02-15-preview"  # Use this version for gpt4 # "2023-07-01-preview"
 
-llm = ut.get_llm_instance(configs=cfg_instance.llm_configs)
+llm = utils.get_llm_instance(configs=cfg_instance.llm_configs)
 
 
 # ---------------

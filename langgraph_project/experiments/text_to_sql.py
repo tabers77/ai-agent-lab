@@ -1,3 +1,6 @@
+import utils
+from conf.configs import Cfg
+from langchain_community.utilities import SQLDatabase
 
 # ---------------------------------
 cfg_instance = Cfg()
@@ -5,16 +8,16 @@ cfg_instance = Cfg()
 cfg_instance.llm_configs.llm_deployment = "gpt-app"  # "langchain_model"
 cfg_instance.llm_configs.openai_api_version = "2024-02-15-preview"  # Use this version for gpt4 # "2023-07-01-preview"
 
-llm = ut.get_llm_instance(configs=cfg_instance.llm_configs)
+llm = utils.get_llm_instance(configs=cfg_instance.llm_configs)
 
 # --------------------------------
 
 # 1. Point it at your DB (no manual SQL)
 
-db = SQLDatabase.from_uri(connection_string)
+db = SQLDatabase.from_uri(cfg_instance.database_configs.pg_connection_string)
 
 # 2. Wrap it as a toolkit
-toolkit = SQLDatabaseToolkit(db=db, llm=llm)
+#toolkit = SQLDatabaseToolkit(db=db, llm=llm)
 
 # from langchain import hub
 #
@@ -59,4 +62,5 @@ agent = create_sql_agent(
 
 # then exactly the same invoke:
 response = agent.invoke(query)
+
 print('response', response['output'])

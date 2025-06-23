@@ -24,13 +24,15 @@ import taberspilotml.experimental.llms.lang_models as comps
 
 from typing import List
 
+import utils
+
 cfg_instance = Cfg()
 
 Cfg.llm_configs.llm_type = "azure_chat_openai"
 Cfg.llm_configs.llm_deployment = "gpt4-vision"
 Cfg.llm_configs.openai_api_version = "2024-02-15-preview"
 
-llm = comps.get_llm_instance(configs=cfg_instance.llm_configs, max_tokens=1600)
+llm = utils.get_llm_instance(configs=cfg_instance.llm_configs, max_tokens=1600)
 
 # input_prompt = """
 #

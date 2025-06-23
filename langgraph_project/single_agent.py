@@ -5,6 +5,8 @@ from typing import Annotated
 from langchain_core.tools import tool
 from langgraph.prebuilt import InjectedState, create_react_agent
 from langchain_community.tools.tavily_search import TavilySearchResults
+
+import utils
 from conf.configs import Cfg
 
 import utils as ut
@@ -21,7 +23,7 @@ cfg_instance = Cfg()
 cfg_instance.llm_configs.llm_deployment = "gpt-app"  # "langchain_model"
 cfg_instance.llm_configs.openai_api_version = "2024-02-15-preview"  # Use this version for gpt4 # "2023-07-01-preview"
 
-llm = ut.get_llm_instance(configs=cfg_instance.llm_configs)
+llm = utils.get_llm_instance(configs=cfg_instance.llm_configs)
 
 
 # 2. Define your “tool” agents
