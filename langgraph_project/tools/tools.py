@@ -173,4 +173,82 @@ def safe_fetch_and_summarize(url: str) -> str:
             print(f"[Error] fallback summarizer also failed for {url}: {e2}")
             return f"[Failed to fetch or summarize {url}: {e2}]"
 
-#
+
+# ------------------------
+# REFACTORING AGENT TOOLS
+# ------------------------
+
+import os
+import subprocess
+from typing import List, Tuple
+
+
+def list_files(path: str) -> List[str]:
+    """
+    Recursively list all .py files in the given directory path,
+    skipping virtual environment directories (e.g., venv, .venv, env, .env).
+    Returns a list of Python file paths.
+    """
+    file_paths: List[str] = []
+    skip_dirs = {"venv", ".venv", "env", ".env"}
+    for root, dirs, files in os.walk(path):
+        # Skip virtual environment directories
+        dirs[:] = [d for d in dirs if d not in skip_dirs]
+        for file in files:
+            if file.endswith('.py'):
+                file_paths.append(os.path.join(root, file))
+    return file_paths
+
+def read_file(path: str) -> str:
+    """
+    Read and return the content of the file at the given path.
+    """
+    with open(path, 'r', encoding='utf-8') as f:
+        return f.read()
+
+
+def write_file(path: str, contents: str) -> None:
+    """
+    Write the provided contents to the file at the given path, overwriting it.
+    """
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(contents)
+
+
+def python_repl(code: str, timeout: int = 60) -> Tuple[str, str]:
+    """
+    Execute the provided Python code in a subprocess and capture stdout and stderr.
+    Returns a tuple (stdout, stderr).
+
+    Args:
+        code: a string of Python code to execute.
+        timeout: maximum seconds to allow the code to run.
+    """
+    # Run the code in a new Python interpreter instance
+    process = subprocess.run(
+        ['python', '-c', code],
+        capture_output=True,
+        text=True,
+        timeout=timeout
+    )
+    return process.stdout, process.stderr
+
+
+def shell(cmd: str, timeout: int = 60) -> Tuple[str, str]:
+    """
+    Execute a shell command and capture stdout and stderr.
+    Returns a tuple (stdout, stderr).
+
+    Args:
+        cmd: the shell command to run (string).
+        timeout: maximum seconds to allow the command to run.
+    """
+    process = subprocess.run(
+        cmd,
+        shell=True,
+        capture_output=True,
+        text=True,
+        timeout=timeout
+    )
+    return process.stdout, process.stderr

@@ -1,28 +1,35 @@
-"""This example uses react agent approach which allows the agent to choose tools dynamically."""
+"""
+Multi-agent base example.
+IMPORTANT!!! Use this as base example to add new techniques and test approaches.
+This example uses react agent approach which allows the agent to choose tools dynamically.
+"""
+
 
 import logging
 
-from langchain_core.messages import HumanMessage
-
 from langgraph.graph import StateGraph, START
 
-from langgraph_project.agents_nodes.custom_nodes import make_writing_node, make_research_node
-from langgraph_project.multi_agents.AgentState import MultiState  # Using a custom state class
-import langgraph_project.tools.tools as tools
-import langgraph_project.multi_agents.helpers as ut
-
-from langgraph_project.agents_nodes.agent_factory import make_agent
-
-import prompts.multiagents_prompts as prompts
 from utils import llm
+
+from langchain_core.messages import HumanMessage
+from langgraph_project.agents_nodes.agent_factory import make_agent
+from langgraph_project.agents_nodes.custom_nodes import (
+    make_research_node,
+    make_writing_node,
+)
+from langgraph_project.multi_agents.AgentState import MultiState
+import langgraph_project.multi_agents.helpers as ut
+import langgraph_project.tools.tools as tools
+import prompts.multiagents_prompts as prompts
+
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# -------------
-# LLM SETTINGS
-# -------------
+# ----------------
+# 1. LLM SETTINGS
+# ----------------
 research_llm = llm
 writing_llm = llm
 
@@ -31,8 +38,10 @@ writing_llm.temperature = 0  # lower temp for focused writing
 
 
 # ----------------
-# TOOL TRACKERS
+# 2. TOOL TRACKERS
 # ----------------
+# Define tools needed
+# Observe that here we could add nodes with tools
 
 def create_tracker(tool_fn, min_calls: int = 1, max_calls: int = 10):
     return ut.ToolInvocationTracker(tool_fn, min_calls=min_calls, max_calls=max_calls)
@@ -43,11 +52,10 @@ summarize_tracker = create_tracker(tools.safe_fetch_and_summarize)
 
 
 # ----------------
-# AGENT FACTORY
+# 3. AGENT FACTORY
 # ----------------
 
 # Note: Observe that with create_react_agent you cant guarantee the model must pick one of your registered tools.
-
 
 
 # # --- Meta-Planning Agent ---
@@ -96,6 +104,7 @@ builder.add_edge(START, "research_node")
 builder.add_node("research_node", research_node)
 builder.add_node("writing_node", writing_node)
 graph = builder.compile()
+
 
 # -------
 # INVOKE

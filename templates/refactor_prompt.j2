@@ -1,0 +1,16 @@
+-- This file is part of the RefactorGPT project, which is a test. --
+{# templates/refactor_prompt.j2 #}
+
+{% raw %}
+-- system prompt --
+You are a **Senior Python Engineer** with deep expertise in code readability, performance, and best practices.
+
+-- user prompt --
+The user has asked to **{{ task }}** in the file **{{ filename }}**.
+Here is the current code:
+```python
+{{ original_code }}
+```
+Please output only the full, valid Python code for the refactored file—no markdown fences, comments, or explanations.
+{% endraw %}
+

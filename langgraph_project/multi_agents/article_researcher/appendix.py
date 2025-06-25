@@ -1,8 +1,8 @@
 """TODO: ADD CODE THAT HAS NOT BEING IMPLEMENTED YET"""
 
-# # ------
-# # TOOLS
-# # ------
+# # --------------
+# # DEFINE TOOLS
+# # --------------
 # # 1) Wrap your existing functions as LangChain Tools / OpenAI functions
 # search_tool = Tool.from_function(
 #     func=tools.web_search,
@@ -15,10 +15,9 @@
 #     description="Fetch a URL's content and return a concise summary."
 # )
 
-
-#
-# # -----------------------------------------------------------
-# # MEMORY AGENT: OPTIONAL
+# ----------------
+# # MEMORY AGENT:
+# ----------------
 # from langchain import LLMChain, PromptTemplate
 # from langchain.tools import Tool
 #
@@ -59,39 +58,8 @@
 # )
 #
 #
-# # ------------------
-# # NODE DEFINITIONS
-# # ------------------
-# def memory_node(state):
-#     # Only summarize if conversation is long
-#     if len(state["messages"]) < 10:
-#         return Command(goto="research_node")
+
 #
-#     # Invoke memory_agent to compress state["messages"]
-#     res = memory_agent.invoke({"messages": state["messages"]})
-#     summary = None
-#     for msg in res["messages"]:
-#         if isinstance(msg, ToolMessage) and msg.name == "summarize_text":
-#             summary = msg.content
-#             break
-#     if not summary:
-#         # If summarization failed, skip
-#         return Command(goto="research_node")
-#
-#     # Update memory and prune messages to keep only recent context
-#     pruned_history = state["messages"][-5:]
-#     new_messages = [AIMessage(content=summary, name="memory_node")] + pruned_history
-#
-#     return Command(
-#         update={
-#             "memory": summary,
-#             "messages": new_messages
-#         },
-#         goto="research_node"
-#     )
-#
-#
-# # -----------------------------------------------------------
 
 # # ---------------
 # # Using pydantic
@@ -115,43 +83,3 @@
 #     ])
 # )
 
-
-# -----------
-# ORCHESTRATE
-# -----------
-
-
-# def research_node(state):
-#     res = research_agent.invoke(state)
-#
-#     print('***DEBUG***: state messages', state['messages'])
-#
-#     # res = research_agent.invoke({"messages": state["messages"]})
-#
-#     print('***DEBUG***: res from research agent', res)
-#
-#     # collect only the ToolMessage contents (these are your summaries)
-#     research_summaries = [
-#         msg.content
-#         for msg in res["messages"]
-#         if isinstance(msg, ToolMessage) and msg.name == "fetch_and_summarize"
-#     ]
-#
-#     print('***DEBUG***: research_summaries', research_summaries)
-#     # After gathering summaries, we return a Command that does two things:
-#     # 1) Updates the shared `state` by:
-#     #    • Storing our list of summaries under `"research_results"`, so downstream nodes can access them.
-#     #    • Appending an AIMessage “Research complete.” to the `"messages"` list, preserving conversation context.
-#     # 2) Tells the orchestrator to transition next into the `"writing_node"`.
-#     return Command(
-#         update={
-#             "research_results": research_summaries,  # list of summaries
-#             "messages": state["messages"] + [
-#                 AIMessage(content="Research complete.", name="research_node")
-#             ]
-#         },
-#         goto="writing_node"
-#     )
-#
-
-# ---------------------------------------------------------------------------------------

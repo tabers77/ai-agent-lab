@@ -1,4 +1,9 @@
-from typing import Annotated, Literal, Optional
+"""
+Note: Avoid having local imports here to avoid circular imports.
+"""
+from typing import Annotated, Literal, Optional, Any, Dict
+
+from pydantic import BaseModel, Field, field_validator
 from typing_extensions import TypedDict
 from typing import List
 
@@ -14,6 +19,10 @@ def update_dialog_stack(left: list[str], right: Optional[str]) -> list[str]:
     return left + [right]
 
 
+# ----------------
+# STATE TEMPLATES
+# ----------------
+# These are templates
 class State(TypedDict):
     messages: Annotated[list[AnyMessage], add_messages]
     dialog_state: Annotated[
@@ -28,8 +37,22 @@ class State(TypedDict):
     ]
 
 
+class AgentState(BaseModel):
+    # -- Core, always-present fields --
+    step: str = Field(..., description="Current pipeline step")
+    history: Optional[list[str]] = Field(default_factory=list, description="Log of events or messages")
+    error: Optional[str] = Field(None, description="Last error, if any")
+
+    # -- Catch-all for custom data per agent --
+    data: Dict[str, Any] = Field(default_factory=dict, description="Agent-specific payload")
+
+    class Config:
+        extra = "ignore"
 
 
+# ----------------
+# CUSTOM STATES
+# ----------------
 class MultiState(TypedDict, total=False):
     """
     Conversation state for the multi-agent pipeline.
@@ -53,14 +76,12 @@ class MultiState(TypedDict, total=False):
     research_results: List[str]
 
 
-# -----------------------------------------
-# TEST
 # --- define the shape of each research result ---
 class ResearchResult(TypedDict):
     subgoal: str
     summaries: List[str]
 
-# --- updated conversation state ---
+
 class MultiState2(TypedDict, total=False):
     """
     Conversation state for the meta-planning → research → writing pipeline.
@@ -86,4 +107,21 @@ class MultiState2(TypedDict, total=False):
     article: str
 
 
-# -----------------------------------------
+class RefactorState(BaseModel):
+    filename: str = Field(..., min_length=1)
+    task: str = Field(..., min_length=1)
+    original_code: Optional[str] = None
+    refactored_raw: str = Field("", description="Raw LLM output with potential fences")
+    refactored_code: str = Field("", description="Clean, validated Python code")
+    temp_path: str = Field("", description="Path to temporary refactored file")
+    exec_stdout: str = Field("", description="Captured stdout of execution")
+    exec_stderr: str = Field("", description="Captured stderr of execution or errors")
+
+    @field_validator("original_code")
+    def original_code_not_empty(cls, v):
+        # Only validate after read_file has set original_code
+        if v is None:
+            return v
+        if not v.strip():
+            raise ValueError("`original_code` must not be empty")
+        return v
